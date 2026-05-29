@@ -273,7 +273,8 @@ export async function main() {
     input: [
       {
         role: 'system',
-        content: `You are a sports journalist, do not search the Web for any information, use only the provided data,`,
+        content: `You are a sports journalist, do not search the Web for any information, 
+        use only the provided data, if you are unsure about something do not include it or make assumptions`,
       },
       {
         role: 'user',
