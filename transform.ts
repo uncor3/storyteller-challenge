@@ -1,8 +1,8 @@
 import StoryPack from './schema/story.schema.ts';
 import EventsSchema from './data/events.schema.ts';
+import MatchInfoSchema from './data/match_info.schema.ts';
 import Ajv from 'ajv/dist/2020';
 import addFormats from 'ajv-formats';
-import MatchData from './data/match_events.json';
 import crypto from 'crypto';
 import fs from 'fs';
 import { IMAGES } from './shared/constants.ts';
@@ -11,29 +11,65 @@ import OpenAI from 'openai';
 import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 
-type Message = (typeof MatchData.messages)[number]['message'][number];
-const OUT_DIR = './out';
+import type { FromSchema } from 'json-schema-to-ts';
+
+export type Message = FromSchema<typeof EventsSchema>;
 
 if (!process.env.OPENAI_API_KEY) {
   console.log(
-    'Please set OPENAI_API_KEY env var, you can use the API key I provided in the email sent to you',
+    'Please set OPENAI_API_KEY env var, you can use the API key I provided in the email sent to you'
   );
   exit(1);
 }
 
 const openai = new OpenAI();
-const story_id = crypto.randomUUID();
-
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
-
 const validateEvent = ajv.compile(EventsSchema);
+const validateMatchInfo = ajv.compile(MatchInfoSchema);
 
-async function main() {
+const DEFAULT_OUT_DIR = './out';
+const DEFAULT_INPUT_FILE = './data/match_events.json';
+const DEFAULT_OUTPUT_FILE_NAME = 'out.json';
+const OUT_DIR = process.env.OUT_DIR || DEFAULT_OUT_DIR;
+const INPUT_FILE = process.env.INPUT_FILE || DEFAULT_INPUT_FILE;
+const OUTPUT_FILE_NAME =
+  process.env.OUTPUT_FILE_NAME || DEFAULT_OUTPUT_FILE_NAME;
+const DEBUG = process.env.DEBUG === 'true';
+
+const MATCH_DATA = JSON.parse(
+  fs.readFileSync(INPUT_FILE, 'utf-8')
+) as FromSchema<typeof MatchInfoSchema> & {
+  messages:
+    | {
+        message: Message[] | undefined;
+      }[]
+    | undefined;
+};
+
+export async function main() {
+  if (!MATCH_DATA.matchInfo || !validateMatchInfo(MATCH_DATA.matchInfo)) {
+    console.log('Invalid match info data');
+    console.log(validateMatchInfo.errors);
+    exit(1);
+  }
+
+  if (
+    !MATCH_DATA.messages ||
+    !Array.isArray(MATCH_DATA.messages) ||
+    !MATCH_DATA.messages[0] ||
+    !MATCH_DATA.messages[0].message ||
+    !Array.isArray(MATCH_DATA.messages[0].message)
+  ) {
+    console.log('Invalid messages data');
+    exit(1);
+  }
+
+  const story_id = crypto.randomUUID();
   type NormalizedMessage = ReturnType<typeof normalizeEvent>;
   const pages = [];
   const contestById = new Map(
-    MatchData.matchInfo.contestant.map((team) => [team.id, team]),
+    MATCH_DATA.matchInfo.contestant.map((team) => [team.id, team])
   );
 
   function getTeamName(teamId?: string) {
@@ -48,11 +84,11 @@ async function main() {
 
   let homeScore = 0;
   let awayScore = 0;
-  const homeTeamId = MatchData.matchInfo.contestant.find(
-    (t) => t.position === 'home',
+  const homeTeamId = MATCH_DATA.matchInfo.contestant.find(
+    (t) => t.position === 'home'
   )?.id;
-  const awayTeamId = MatchData.matchInfo.contestant.find(
-    (t) => t.position === 'away',
+  const awayTeamId = MATCH_DATA.matchInfo.contestant.find(
+    (t) => t.position === 'away'
   )?.id;
 
   function isGoal(event: NormalizedMessage) {
@@ -78,6 +114,18 @@ async function main() {
     'penalty won': 1,
   };
 
+  const TYPE_CAPTIONS: Record<string, string> = {
+    goal: 'Goal !!!',
+    'penalty goal': 'Penalty Goal !!!',
+    'penalty won': 'Penalty Won !!!',
+    'yellow card': 'Yellow Card',
+    'red card': 'Red Card',
+  };
+
+  function captionFromType(type: string) {
+    return TYPE_CAPTIONS[type] ?? 'match event';
+  }
+
   function getRandomImage() {
     return IMAGES[Math.floor(Math.random() * IMAGES.length)];
   }
@@ -91,19 +139,19 @@ async function main() {
   }
 
   function normalizeEvent(m: Message) {
+    // i am parsing them to integers because
+    // in events.schema.md
+    // it's mentioned that `minute` , `period` and `second` are integers
+    // even though we receive them as strings
     const minute = Number.parseInt(String(m.minute ?? ''));
     const period = Number.parseInt(String(m.period ?? ''));
     const second = Number.parseInt(String(m.second ?? ''));
 
     return {
+      ...m,
       minute,
       period,
       second,
-      teamRef1: m.teamRef1,
-      type: m.type,
-      playerRef1: m.playerRef1,
-      playerRef2: m.playerRef2,
-      comment: m.comment,
     };
   }
 
@@ -120,9 +168,17 @@ async function main() {
   // we need to do reverse in order for the
   // captions (scores) to be accurate
   // reverse modifies the original array and it's fine
-  for (const m of MatchData.messages[0]!.message.reverse()) {
+  // also I'm assuming that we only get data from the first message
+  for (const m of MATCH_DATA.messages[0].message.reverse()) {
     const normalized = normalizeEvent(m);
-    if (!validateEvent(normalized)) continue;
+    if (!validateEvent(normalized)) {
+      if (DEBUG) {
+        console.log('Detected invalid event data');
+        console.log(m);
+        console.log(validateEvent.errors);
+      }
+      continue;
+    }
     if (!isHighlight(normalized)) continue;
     if (isGoal(normalized)) countAsGoal(normalized);
 
@@ -142,12 +198,30 @@ async function main() {
       type: normalized.type,
       comment: normalized.comment,
       // if the score is the same then just show the comment
-      caption: caption === prevCaption ? normalized.comment : caption,
+      // type is generally yellow card
+      caption:
+        caption === prevCaption ? captionFromType(normalized.type) : caption,
       headline,
       score: highlightScore(normalized.type),
     });
     prevCaption = caption;
   }
+
+  const score = {
+    homeName: getTeamName(homeTeamId) ?? 'Home',
+    homeScore,
+    awayName: getTeamName(awayTeamId) ?? 'Away',
+    awayScore,
+  };
+
+  const finalScore = `${score.homeName} ${score.homeScore}-${score.awayScore} ${score.awayName}`;
+
+  pages.push({
+    type: 'cover',
+    headline: finalScore,
+    subheadline: `${MATCH_DATA.matchInfo.competition.knownName} · ${MATCH_DATA.matchInfo.localDate}`,
+    image: IMAGES[Math.floor(Math.random() * IMAGES.length)],
+  });
 
   // higher score first if it's a tie, pick the later minute first
   highlightCandidates
@@ -164,22 +238,6 @@ async function main() {
       });
     });
 
-  const score = {
-    homeName: getTeamName(homeTeamId) ?? 'Home',
-    homeScore,
-    awayName: getTeamName(awayTeamId) ?? 'Away',
-    awayScore,
-  };
-
-  const finalScore = `${score.homeName} ${score.homeScore}-${score.awayScore} ${score.awayName}`;
-
-  pages.push({
-    type: 'cover',
-    headline: finalScore,
-    subheadline: `${MatchData.matchInfo.competition.knownName} · ${MatchData.matchInfo.localDate}`,
-    image: IMAGES[Math.floor(Math.random() * IMAGES.length)],
-  });
-
   const InfoScheme = z.object({
     headline: z.string().min(10),
     body: z.string().min(200),
@@ -192,7 +250,7 @@ async function main() {
     input: [
       {
         role: 'system',
-        content: `You are a sports journalist`,
+        content: `You are a sports journalist, do not search the Web for any information, use only the provided data,`,
       },
       {
         role: 'user',
@@ -203,8 +261,8 @@ async function main() {
         Here is the match details
 
         Match: ${finalScore}
-        Competition: ${MatchData.matchInfo.competition.knownName}
-        Date: ${MatchData.matchInfo.localDate}
+        Competition: ${MATCH_DATA.matchInfo.competition.knownName}
+        Date: ${MATCH_DATA.matchInfo.localDate}
         
         Key Events : ${JSON.stringify(highlightCandidates)}
         `,
@@ -228,13 +286,13 @@ async function main() {
     type: 'info',
     headline: out.headline,
     body: out.body,
-    //additional but i believe it'll look good on UI
+    //additional but i believe it'll look good in the UI
     image: getRandomImage(),
   });
 
   const data = {
     story_id,
-    title: finalScore || MatchData.matchInfo.description,
+    title: finalScore || MATCH_DATA.matchInfo.description,
     source: 'provided-data',
     created_at: new Date().toISOString(),
     metrics: {
@@ -245,7 +303,10 @@ async function main() {
   };
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(`${OUT_DIR}/out.json`, JSON.stringify(data, null, 2));
+  fs.writeFileSync(
+    `${OUT_DIR}/${OUTPUT_FILE_NAME}`,
+    JSON.stringify(data, null, 2)
+  );
 
   const validate = ajv.compile(StoryPack);
   const valid = validate(data);
@@ -254,8 +315,7 @@ async function main() {
     exit(1);
   }
 
-  // FIXME: make this dynamic based on the input file name
-  console.log('Data is valid and written to out/out.json');
+  console.log(`Data is valid and written to ${OUT_DIR}/${OUTPUT_FILE_NAME}`);
 }
 
 main();
