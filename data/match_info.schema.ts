@@ -1,0 +1,156 @@
+export default {
+  $schema: 'https://json-schema.org/draft/2020-12/schema',
+  $id: 'matchInfo.schema.json',
+  title: 'MatchInfo',
+  type: 'object',
+  properties: {
+    matchInfo: {
+      type: 'object',
+      required: [
+        'id',
+        'coverageLevel',
+        'date',
+        'time',
+        'localDate',
+        'localTime',
+        'week',
+        'numberOfPeriods',
+        'periodLength',
+        'var',
+        'lastUpdated',
+        'description',
+        'sport',
+        'ruleset',
+        'competition',
+        'tournamentCalendar',
+        'stage',
+        'contestant',
+        'venue',
+      ],
+      properties: {
+        id: { type: 'string' },
+        coverageLevel: { type: 'string' },
+        date: { type: 'string', format: 'date' },
+        time: { type: 'string', format: 'time' },
+        localDate: { type: 'string', format: 'date' },
+        localTime: { type: 'string', format: 'time' },
+        week: { type: 'string' },
+        numberOfPeriods: { type: 'integer', minimum: 1 },
+        periodLength: { type: 'integer', minimum: 1 },
+        var: { type: 'string' },
+        lastUpdated: { type: 'string', format: 'date-time' },
+        description: { type: 'string' },
+
+        sport: { $ref: '#/$defs/IdName' },
+        ruleset: { $ref: '#/$defs/IdName' },
+
+        competition: {
+          type: 'object',
+          required: [
+            'id',
+            'name',
+            'competitionCode',
+            'competitionFormat',
+            'country',
+          ],
+          properties: {
+            id: { type: 'string' },
+            name: { type: 'string' },
+            knownName: { type: 'string' },
+            sponsorName: { type: 'string' },
+            competitionCode: { type: 'string' },
+            competitionFormat: { type: 'string' },
+            country: { $ref: '#/$defs/IdName' },
+          },
+          additionalProperties: false,
+        },
+
+        tournamentCalendar: {
+          type: 'object',
+          required: ['id', 'startDate', 'endDate', 'name'],
+          properties: {
+            id: { type: 'string' },
+            startDate: { type: 'string', format: 'date' },
+            endDate: { type: 'string', format: 'date' },
+            name: { type: 'string' },
+          },
+          additionalProperties: false,
+        },
+
+        stage: {
+          type: 'object',
+          required: ['id', 'formatId', 'startDate', 'endDate', 'name'],
+          properties: {
+            id: { type: 'string' },
+            formatId: { type: 'string' },
+            startDate: { type: 'string', format: 'date' },
+            endDate: { type: 'string', format: 'date' },
+            name: { type: 'string' },
+          },
+          additionalProperties: false,
+        },
+
+        contestant: {
+          type: 'array',
+          minItems: 2,
+          maxItems: 2,
+          items: {
+            type: 'object',
+            required: [
+              'id',
+              'name',
+              'shortName',
+              'officialName',
+              'code',
+              'position',
+              'country',
+            ],
+            properties: {
+              id: { type: 'string' },
+              name: { type: 'string' },
+              shortName: { type: 'string' },
+              officialName: { type: 'string' },
+              code: { type: 'string', pattern: '^[A-Z]{3}$' },
+              position: { type: 'string', enum: ['home', 'away'] },
+              country: { $ref: '#/$defs/IdName' },
+            },
+            additionalProperties: false,
+          },
+        },
+
+        venue: {
+          type: 'object',
+          required: [
+            'id',
+            'neutral',
+            'longName',
+            'shortName',
+            'latitude',
+            'longitude',
+          ],
+          properties: {
+            id: { type: 'string' },
+            neutral: { type: 'string', enum: ['yes', 'no'] },
+            longName: { type: 'string' },
+            shortName: { type: 'string' },
+            latitude: { type: 'string', pattern: '^-?\\d+(\\.\\d+)?$' },
+            longitude: { type: 'string', pattern: '^-?\\d+(\\.\\d+)?$' },
+          },
+          additionalProperties: false,
+        },
+      },
+      additionalProperties: false,
+    },
+  },
+
+  $defs: {
+    IdName: {
+      type: 'object',
+      required: ['id', 'name'],
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+      },
+    },
+  },
+} as const;
