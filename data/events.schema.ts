@@ -74,5 +74,4 @@ export default {
       description: 'Human-readable description of the event',
     },
   },
-  additionalProperties: false,
 } as const;
