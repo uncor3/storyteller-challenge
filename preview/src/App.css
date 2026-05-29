@@ -4,8 +4,13 @@
   border-radius: 50%;
   padding: 4px;
   overflow: hidden;
-  background: linear-gradient(to right top, #ffc600 20%, #ff0040, #e600cc 80%);
-  /* border: 2px solid transparent; */
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #15803d 35%,
+    #22c55e 65%,
+    #ffffff 100%
+  );
 }
 
 .story.viewed {
@@ -14,8 +19,6 @@
 }
 
 .swiper {
-  /* width: 70vw;
-  height: 50vh; */
   @apply w-full h-full md:w-[70vw] md:h-[80vh] xl:h-[90vh] xl:w-[30vw];
 }
 

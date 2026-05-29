@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import type { StoryPack } from '../../../shared/types';
 import { useNavigate } from 'react-router-dom';
 import { getViewedStories, setAsViewed } from '../utils';
-import { VIEWED_STORIES_CACHE_KEY } from '@/shared/constants';
-import type { Highlight } from '@/shared/types';
+import type { StoryPack } from '@/shared/types';
 
-const HeaderItem: React.FC<{
-  story: Highlight;
+const HighlightItem: React.FC<{
+  story: StoryPack['pages'][number];
   story_id: string;
   viewed: boolean;
   i: number;
@@ -16,7 +14,7 @@ const HeaderItem: React.FC<{
   return (
     <div className="flex flex-col">
       <div
-        className={`w-[100px] h-[100px] rounded-full cursor-pointer story ${
+        className={`w-[80px] h-[80px] md:w-[100px] md:h-[100px] rounded-full cursor-pointer story ${
           viewed ? 'viewed' : ''
         }`}
         onClick={() => {
@@ -24,20 +22,29 @@ const HeaderItem: React.FC<{
           setAsViewed(story_id, i);
         }}
       >
-        <img src={story.image} className="w-full h-full rounded-full" alt="" />
+        <img
+          src={story.image ? (story.image as string) : '/placeholder.png'}
+          className="w-full h-full rounded-full"
+          alt=""
+        />
       </div>
 
-      <h1 className="text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 truncate w-[120px]">
-        {story.caption}
+      <h1 className="text-sm md:text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50 truncate w-[80px] md:w-[120px] mt-2">
+        {story.caption ? (story.caption as string) : story.headline}
       </h1>
-      {story.minute ? <span>{story.minute as number}'</span> : null}
+      {story.minute ? (
+        <span className="text-zinc-900 dark:text-zinc-50">
+          {story.minute as number}'
+        </span>
+      ) : null}
     </div>
   );
 };
 
 const StoryHeader: React.FC<{
-  stories: Record<string, StoryPack>;
-}> = ({ stories }) => {
+  stories: StoryPack;
+  story_id: string;
+}> = ({ stories, story_id }) => {
   const [viewedStories, setViewedStories] = useState(getViewedStories);
 
   useEffect(() => {
@@ -55,24 +62,18 @@ const StoryHeader: React.FC<{
   return (
     <div className="relative">
       <header className="flex gap-3 overflow-x-scroll">
-        {Object.values(stories).map((s) =>
-          s.pages.map((p, i) => {
-            // FIXME: pass highligt here
-            if (p.type == 'highlight')
-              return (
-                <HeaderItem
-                  key={i}
-                  story={p}
-                  i={i}
-                  story_id={s.story_id}
-                  viewed={viewedStories[`${s.story_id}?index=${i}`]}
-                />
-              );
-          }),
-        )}
+        {stories.pages.map((highlight, i) => (
+          <HighlightItem
+            key={i}
+            story={highlight}
+            i={i}
+            story_id={story_id}
+            viewed={viewedStories[`${story_id}?index=${i}`]}
+          />
+        ))}
       </header>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/40 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-black/40 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-black/60 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black/60 to-transparent" />
     </div>
   );
 };

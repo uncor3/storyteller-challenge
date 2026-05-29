@@ -1,47 +1,35 @@
 import Out from '../../out/out.json';
-import type { Highlight, Cover, Info } from '@/shared/types';
 import type { StoryPack } from '@/shared/types';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import validateData from '@/lib/validateData';
+import { validateStorypack } from './utils';
 import Story from './components/Story';
 import Main from './pages/Main';
 import './App.css';
 
-const isValid = validateData(Out);
-console.log({ isValid });
-const stories: Record<string, StoryPack> = {};
-
-type Parsed = {
-  highlight: Highlight[];
-  info: Info[];
-  cover: Cover[];
-};
-
-const parsed: Parsed = {
-  highlight: [],
-  info: [],
-  cover: [],
-};
-
-const typedOut = Out as StoryPack;
-typedOut.pages.forEach((p) => {
-  if (p.type === 'highlight') parsed.highlight.push(p as Highlight);
-  else if (p.type === 'cover') parsed.cover.push(p as Cover);
-  else if (p.type === 'info') parsed.info.push(p as Info);
-});
-
-stories[Out.story_id] = typedOut;
-
 function App() {
+  const isValid = validateStorypack(Out);
+  if (!isValid) {
+    return (
+      <div className="text-2xl text-red-500">
+        Invalid data. Check console for details.
+      </div>
+    );
+  }
+
+  const typedOut = Out as StoryPack;
+
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+      <div className="flex items-center min-h-screen">
         <div className="mx-auto flex w-full max-w-5xl flex-col px-4 py-6 md:px-6">
           <Routes>
-            <Route path="/" element={<Main stories={stories} />}>
+            <Route
+              path="/"
+              element={<Main stories={typedOut} story_id={Out.story_id} />}
+            >
               <Route
                 path="story/:storyId"
-                element={<Story stories={stories} />}
+                element={<Story story_id={Out.story_id} stories={typedOut} />}
               />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />

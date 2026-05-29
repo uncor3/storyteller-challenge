@@ -1,0 +1,96 @@
+{
+  "story_id": "77d2029f-eade-409a-a0b2-5ac2d1b1fb51",
+  "title": "Celtic 4-0 Kilmarnock",
+  "source": "provided-data",
+  "created_at": "2026-05-29T20:17:54.990Z",
+  "metrics": {
+    "highlights": 9,
+    "goals": 4
+  },
+  "pages": [
+    {
+      "type": "cover",
+      "headline": "Celtic 4-0 Kilmarnock",
+      "subheadline": "Scottish Premiership · 2025-11-09",
+      "image": "21522057.jpg"
+    },
+    {
+      "type": "highlight",
+      "minute": 92,
+      "headline": "Celtic 4-0 Kilmarnock",
+      "caption": "CEL 4-0 KIL",
+      "image": "21522413.jpg",
+      "explanation": "Goal! Celtic 4, Kilmarnock 0. Arne Engels (Celtic) converts the penalty with a right footed shot to the bottom left corner."
+    },
+    {
+      "type": "highlight",
+      "minute": 84,
+      "headline": "Celtic 3-0 Kilmarnock",
+      "caption": "CEL 3-0 KIL",
+      "image": "21522003.jpg",
+      "explanation": "Goal! Celtic 3, Kilmarnock 0. Daizen Maeda (Celtic) right footed shot from the right side of the box to the bottom right corner. Assisted by Arne Engels with a through ball."
+    },
+    {
+      "type": "highlight",
+      "minute": 50,
+      "headline": "Celtic 2-0 Kilmarnock",
+      "caption": "CEL 2-0 KIL",
+      "image": "21522071.jpg",
+      "explanation": "Goal! Celtic 2, Kilmarnock 0. Kieran Tierney (Celtic) left footed shot from outside the box to the bottom right corner. Assisted by Liam Scales."
+    },
+    {
+      "type": "highlight",
+      "minute": 9,
+      "headline": "Celtic 1-0 Kilmarnock",
+      "caption": "CEL 1-0 KIL",
+      "image": "21522345.jpg",
+      "explanation": "Goal! Celtic 1, Kilmarnock 0. Johnny Kenny (Celtic) left footed shot from very close range to the bottom left corner. Assisted by Reo Hatate."
+    },
+    {
+      "type": "highlight",
+      "minute": 91,
+      "headline": "Celtic 3-0 Kilmarnock",
+      "caption": "Penalty Won !!!",
+      "image": "21522345.jpg",
+      "explanation": "Penalty Celtic. Yang Hyun-Jun draws a foul in the penalty area."
+    },
+    {
+      "type": "highlight",
+      "minute": 79,
+      "headline": "Celtic 2-0 Kilmarnock",
+      "caption": "Yellow Card",
+      "image": "21522328.jpg",
+      "explanation": "Greg Kiltie (Kilmarnock) is shown the yellow card."
+    },
+    {
+      "type": "highlight",
+      "minute": 76,
+      "headline": "Celtic 2-0 Kilmarnock",
+      "caption": "Yellow Card",
+      "image": "21522414.jpg",
+      "explanation": "Daizen Maeda (Celtic) is shown the yellow card for a bad foul."
+    },
+    {
+      "type": "highlight",
+      "minute": 70,
+      "headline": "Celtic 2-0 Kilmarnock",
+      "caption": "Yellow Card",
+      "image": "21522014.jpg",
+      "explanation": "Callum McGregor (Celtic) is shown the yellow card for a bad foul."
+    },
+    {
+      "type": "highlight",
+      "minute": 62,
+      "headline": "Celtic 2-0 Kilmarnock",
+      "caption": "Yellow Card",
+      "image": "21522449.jpg",
+      "explanation": "Brad Lyons (Kilmarnock) is shown the yellow card for a bad foul."
+    },
+    {
+      "type": "info",
+      "headline": "Celtic power to a convincing 4-0 win",
+      "body": "Celtic produced a strong and confident performance to defeat Kilmarnock 4-0 in the Scottish Premiership. Johnny Kenny opened the scoring early, Kieran Tierney added a superb second after the break, and Daizen Maeda made it three with a sharp finish late on. Arne Engels then capped the victory from the spot in stoppage time. It was an impressive, upbeat display full of control, attacking intent, and encouraging signs for the weeks ahead.",
+      "image": "21522014.jpg"
+    }
+  ]
+}
