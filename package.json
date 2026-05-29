@@ -11,10 +11,16 @@
     "transform": "bun transform.ts"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.0",
     "ajv": "^8.20.0",
     "json-schema-to-ts": "^3.1.1",
+    "openai": "^6.39.1",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "react-router-dom": "6",
+    "swiper": "^12.2.0",
+    "tailwindcss": "^4.3.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -16,8 +16,6 @@ export default function validateData(data: any) {
   const valid = validate(data);
   if (!valid) {
     console.log(validate.errors);
-  } else {
-    console.log('Valid');
   }
   return valid;
 }
