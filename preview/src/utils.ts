@@ -1,4 +1,7 @@
-import { VIEWED_STORIES_CACHE_KEY } from '../../shared/constants';
+import { VIEWED_STORIES_CACHE_KEY } from '@/shared/constants';
+import StoryPack from '@/schema/story.schema.ts';
+import Ajv from 'ajv/dist/2020';
+import addFormats from 'ajv-formats';
 
 export function getViewedStories(): Record<string, boolean> {
   const state = localStorage.getItem(VIEWED_STORIES_CACHE_KEY);
@@ -23,4 +26,17 @@ export function setAsViewed(id: string, index: number) {
 
   localStorage.setItem(VIEWED_STORIES_CACHE_KEY, JSON.stringify(stories));
   window.dispatchEvent(new Event('story-viewed'));
+}
+
+const ajv = new Ajv({
+  allErrors: true,
+});
+addFormats(ajv);
+const validate = ajv.compile(StoryPack);
+export function validateStorypack(data: any) {
+  const valid = validate(data);
+  if (!valid) {
+    console.log(validate.errors);
+  }
+  return valid;
 }
