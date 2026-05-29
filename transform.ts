@@ -31,10 +31,33 @@ const validateMatchInfo = ajv.compile(MatchInfoSchema);
 const DEFAULT_OUT_DIR = './out';
 const DEFAULT_INPUT_FILE = './data/match_events.json';
 const DEFAULT_OUTPUT_FILE_NAME = 'out.json';
-const OUT_DIR = process.env.OUT_DIR || DEFAULT_OUT_DIR;
-const INPUT_FILE = process.env.INPUT_FILE || DEFAULT_INPUT_FILE;
+
+function getCliArgs(argv: string[]) {
+  const args: Record<string, string> = {};
+  for (let i = 0; i < argv.length; i += 1) {
+    const token = argv[i];
+    if (!token) continue;
+    if (token.startsWith('--')) {
+      const [rawKey, inlineValue] = token.slice(2).split('=', 2);
+      if (!rawKey) continue;
+      const nextValue = inlineValue ?? argv[i + 1];
+      if (nextValue && !nextValue.startsWith('--')) {
+        args[rawKey] = nextValue;
+        if (inlineValue === undefined) i += 1;
+      }
+    }
+  }
+  return args;
+}
+
+const cliArgs = getCliArgs(process.argv.slice(2));
+const OUT_DIR = cliArgs['out-dir'] || process.env.OUT_DIR || DEFAULT_OUT_DIR;
+const INPUT_FILE =
+  cliArgs['input-file'] || process.env.INPUT_FILE || DEFAULT_INPUT_FILE;
 const OUTPUT_FILE_NAME =
-  process.env.OUTPUT_FILE_NAME || DEFAULT_OUTPUT_FILE_NAME;
+  cliArgs['output-file'] ||
+  process.env.OUTPUT_FILE_NAME ||
+  DEFAULT_OUTPUT_FILE_NAME;
 const DEBUG = process.env.DEBUG === 'true';
 
 const MATCH_DATA = JSON.parse(
