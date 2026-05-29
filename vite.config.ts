@@ -5,9 +5,7 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/storyteller-challenge/',
-  publicDir: 'public',
-  root: 'preview',
+  publicDir: 'preview/public',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
