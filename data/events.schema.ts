@@ -3,6 +3,7 @@ export default {
   title: 'MatchEvent',
   type: 'object',
   required: [
+    'id',
     'minute',
     'period',
     'second',
@@ -12,6 +13,10 @@ export default {
     'comment',
   ],
   properties: {
+    id: {
+      type: 'string',
+      description: 'Unique identifier for the event',
+    },
     minute: {
       type: 'integer',
       minimum: 0,

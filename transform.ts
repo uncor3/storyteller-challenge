@@ -188,6 +188,9 @@ export async function main() {
   }> = [];
 
   let prevCaption = '';
+
+  const seen = new Set<string>();
+
   // we need to do reverse in order for the
   // captions (scores) to be accurate
   // slice().reverse() to avoid mutating the original
@@ -203,6 +206,8 @@ export async function main() {
       continue;
     }
     if (!isHighlight(normalized)) continue;
+    // duplicate
+    if (seen.has(normalized.id)) continue;
     if (isGoal(normalized)) countAsGoal(normalized);
 
     const score = {
@@ -227,6 +232,7 @@ export async function main() {
       score: highlightScore(normalized.type),
     });
     prevCaption = caption;
+    seen.add(normalized.id);
   }
 
   const score = {
@@ -273,12 +279,12 @@ export async function main() {
       {
         role: 'system',
         content: `You are a sports journalist, do not search the Web for any information, 
-        use only the provided data, if you are unsure about something do not include it or make assumptions`,
+        use only the provided data, if you are unsure about something do not include it or make assumptions, be optimistic and natural`,
       },
       {
         role: 'user',
         content: `
-        Write a brief match summary, be optimistic, return headline and body ,
+        Write a brief match summary, return headline and body ,
         headline must at least be 10 characters and the body must be at least 200 characters,
   
         Here is the match details
