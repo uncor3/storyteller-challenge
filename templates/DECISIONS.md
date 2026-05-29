@@ -41,6 +41,8 @@ highlightCandidates.sort((a, b) => b.score - a.score || b.minute - a.minute);
 
 ## Data handling (duplicates, missing fields, out‑of‑order minutes)
 
+- I handled duplicates by keeping a set of seen ids and skipping any event with an id that has already been seen, all filtering happens in a single loop
+
 - I validated `matchInfo` and `messages` separately, it's more work but this way if `matchInfo` is valid, some invalid `messages` are ok we can just drop them instead of dropping the whole thing for a couple invalid `messages`,
 
 - In provided story.schema.json `pack_id` was required but `story_id` was declared I fixed it
@@ -55,7 +57,8 @@ highlightCandidates.sort((a, b) => b.score - a.score || b.minute - a.minute);
 
 ## Pack structure and invariants
 
-- I kept the same pack structure but on "info" type as it allowed additional types I also provided an image for a better looking UI
+- "info" type allows additional types so I provided an image for a better looking UI
+- Added "id" field to events.schema to be able to identify duplicates and filter them out
 
 ## What I would do with 2 more hours
 
