@@ -2,12 +2,11 @@
 
 **✅ Done**
 
-> You need an OpenAI api key in order to run the CLI tool, if you don't have run you can use the Api key I sent to you via email
+You need an OpenAI api key in order to run the CLI tool, if you don't have run you can use the Api key I sent to you via email
 
-> set `export OPENAI_API_KEY=KEY_HERE`
+set `export OPENAI_API_KEY=KEY_HERE`
 
-> I updated the .md files below so you can read, yo can use the link
-> down below to read how I implemented it.
+I updated the .md files below so you can read, yo can use the link down below to read how I implemented it.
 
 - [DECISIONS.md](templates/DECISIONS.md)
 - [AI_USAGE.md](templates/AI_USAGE.md)
