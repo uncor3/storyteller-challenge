@@ -70,10 +70,10 @@ const Stories: React.FC<{
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
         }}
-        // autoplay={{
-        //   delay: 2500,
-        //   disableOnInteraction: false,
-        // }}
+        autoplay={{
+          delay: 2500,
+          disableOnInteraction: false,
+        }}
         onSlideChange={(swiper) => {
           setAsViewed(story_id, swiper.activeIndex);
           updateIndexParam(swiper.activeIndex);

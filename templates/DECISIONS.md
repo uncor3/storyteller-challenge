@@ -59,4 +59,4 @@ highlightCandidates.sort((a, b) => b.score - a.score || b.minute - a.minute);
 
 ## What I would do with 2 more hours
 
-- If I had more time, I could use more AI in the story generation process (that makes sense), maybe more UI elements , upcoming matches (need data from API for this)
+- If I had more time, I could use more AI in the story generation process (wherever makes sense), maybe more UI elements , upcoming matches (need data from API for this)

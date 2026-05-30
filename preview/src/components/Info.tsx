@@ -21,7 +21,7 @@ const Info: React.FC<{ info: InfoType }> = ({ info }) => {
             <img
               src={`/${image}`}
               alt=""
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover aspect-4/3"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
