@@ -35,9 +35,9 @@ describe('story pack validation', () => {
     spy.mockRestore();
   });
 
-  it('generates a valid pack from the provided data', () => {
+  it('generates a valid pack from the provided data', async () => {
     //this assumes default files exist
-    expect(() => transform()).not.toThrow();
+    await expect(transform()).resolves.not.toThrow();
   });
 
   it('validates the generated output and invariants', () => {
