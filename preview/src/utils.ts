@@ -14,6 +14,7 @@ export function getViewedStories(): Record<string, boolean> {
       return data as Record<string, boolean>;
     }
   } catch (error) {
+    console.error('Failed to parse viewed stories from localStorage', error);
     return {};
   }
   return {};
@@ -33,7 +34,7 @@ const ajv = new Ajv({
 });
 addFormats(ajv);
 const validate = ajv.compile(StoryPack);
-export function validateStorypack(data: any) {
+export function validateStorypack(data: unknown) {
   const valid = validate(data);
   if (!valid) {
     console.log(validate.errors);
