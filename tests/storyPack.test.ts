@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { validateStorypack } from '../preview/src/utils.ts';
-import Out from '../out/out.json';
 import { main as transform } from '../transform.ts';
+import fs from 'fs';
 
 describe('story pack validation', () => {
   it('accepts a minimal valid pack', () => {
@@ -41,6 +41,9 @@ describe('story pack validation', () => {
   });
 
   it('validates the generated output and invariants', () => {
+    const outputPath = './out/out.json';
+    const fileContent = fs.readFileSync(outputPath, 'utf-8');
+    const Out = JSON.parse(fileContent);
     const story = Out as unknown as { pages?: Array<{ type?: string }> };
 
     expect(validateStorypack(Out)).toBe(true);

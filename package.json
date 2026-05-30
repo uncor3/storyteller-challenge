@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vitest run && vite build && bun build ./transform.ts --compile --outfile ./dist/transform",
+    "build": "tsc -b && bun lint && vitest run && vite build && bun build ./transform.ts --compile --outfile ./bin/transform",
     "lint": "eslint .",
     "preview": "vite preview",
     "transform": "bun transform.ts",

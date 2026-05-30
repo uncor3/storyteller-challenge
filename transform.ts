@@ -190,9 +190,9 @@ export async function main() {
   let prevCaption = '';
   // we need to do reverse in order for the
   // captions (scores) to be accurate
-  // reverse modifies the original array and it's fine
+  // slice().reverse() to avoid mutating the original
   // also I'm assuming that we only get data from the first message
-  for (const m of MATCH_DATA.messages[0].message.reverse()) {
+  for (const m of MATCH_DATA.messages[0].message.slice().reverse()) {
     const normalized = normalizeEvent(m);
     if (!validateEvent(normalized)) {
       if (DEBUG) {
@@ -220,8 +220,7 @@ export async function main() {
       minute: normalized.minute,
       type: normalized.type,
       comment: normalized.comment,
-      // if the score is the same then just show the comment
-      // type is generally yellow card
+      // if the score is the same then just use captionFromType
       caption:
         caption === prevCaption ? captionFromType(normalized.type) : caption,
       headline,

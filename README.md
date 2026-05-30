@@ -1,6 +1,13 @@
 # Highlights → Stories Mini‑Builder (Tech‑agnostic Scaffold)
 
-**✅ Done**
+**Quick Start**
+
+```shell
+    bun install
+    bun run dev
+```
+
+It will start the frontend and you can see the preview at `http://localhost:5173`
 
 You need an OpenAI api key in order to run the CLI tool, if you don't have run you can use the Api key I sent to you via email
 
@@ -18,7 +25,7 @@ I updated the .md files below so you can read, yo can use the link down below to
 `bun run test` to run the tests, I added a few tests to validate the output story pack and the generated story pack and same sanity checks
 
 **Build**
-`bun run build` to build the project, this will create a `dist/` folder with the compiled code for both frontend and backend, you can run the compiled code using `./dist/transform.$platform_executable_name` and serve the `dist/preview` folder to see the frontend
+`bun run build` to build the project, this will create a `dist/` folder with the compiled code for both frontend and backend, you can run the compiled transform binary `./bin/transform.$platform_executable_name` and serve the `preview/dist` folder to see the frontend
 
 **Thanks for the opportunity and I hope you like my submission**
 

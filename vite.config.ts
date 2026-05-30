@@ -5,7 +5,8 @@ import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
-  publicDir: 'preview/public',
+  root: 'preview',
+  publicDir: 'public',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
